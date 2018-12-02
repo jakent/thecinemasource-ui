@@ -1,5 +1,5 @@
+import styles from './App.module.scss';
 import * as React from 'react';
-import './App.css';
 import { PostComponent } from "../Post/Post";
 import { connect, MapDispatchToProps, MapStateToProps } from 'react-redux';
 import { ActionCreators, FetchPostRequest } from '../../store/actions/postActions';
@@ -23,15 +23,15 @@ class App extends React.Component<Props> {
     }
 
     render() {
-        console.log("App", this.props)
-
         return (
-            <div className="App">
+            <div className={styles.App}>
+                <div className={styles.Container}>
                 You have {this.props.posts.length}
 
                 {this.props.posts.map((post, index) => (
                     <PostComponent key={index} {...post}/>
                 ))}
+            </div>
             </div>
         );
     }
