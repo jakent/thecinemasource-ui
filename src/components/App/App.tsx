@@ -1,48 +1,17 @@
 import styles from './App.module.scss';
 import * as React from 'react';
-import { PostComponent } from "../Post/Post";
-import { connect, MapDispatchToProps, MapStateToProps } from 'react-redux';
-import { ActionCreators, FetchPostRequest } from '../../store/actions/postActions';
-import { ReduxState } from '../../store';
-import { Post } from '../../domain/Post';
+import { Routes } from '../Routes/Routes';
+import { Navigation } from '../Navigation/Navigation';
 
-interface StateProps {
-    posts: Post[]
-}
-
-interface DispatchProps {
-    fetchPosts: () => FetchPostRequest
-}
-
-type Props = StateProps & DispatchProps;
-
-class App extends React.Component<Props> {
-
-    componentDidMount() {
-        this.props.fetchPosts();
-    }
-
+export class App extends React.Component {
     render() {
         return (
             <div className={styles.App}>
                 <div className={styles.Container}>
-                You have {this.props.posts.length}
-
-                {this.props.posts.map((post, index) => (
-                    <PostComponent key={index} {...post}/>
-                ))}
-            </div>
+                    <Navigation/>
+                    <Routes/>
+                </div>
             </div>
         );
     }
 }
-
-const mapStateToProps: MapStateToProps<StateProps, {}, ReduxState> = state => ({
-    posts: state.post.posts
-});
-
-const mapDispatchToProps: MapDispatchToProps<DispatchProps, {}> = dispatch => ({
-    fetchPosts: () => dispatch(ActionCreators.fetchPostsRequest())
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -1,0 +1,20 @@
+
+.Navigation {
+  height: 44px;
+  background-color: #222222;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.Link {
+  color: white;
+  text-decoration: none;
+  line-height: 44px;
+  margin: 0 10px;
+  padding: 0 10px;
+}
+
+.Selected {
+  background-color: white;
+  color: #222222;
+}
