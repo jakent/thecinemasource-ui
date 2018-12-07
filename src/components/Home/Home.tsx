@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { PostComponent } from "../Post/Post";
+import { PostLink } from "../PostLink/PostLink";
 import { connect, MapDispatchToProps, MapStateToProps } from 'react-redux';
 import { ActionCreators, FetchPostRequest } from '../../store/actions/postActions';
 import { ReduxState } from '../../store';
-import { Post } from '../../domain/Post';
+import { Post } from '../../domain/Posts';
 
 interface StateProps {
     posts: Post[]
@@ -27,7 +27,7 @@ class Home extends React.Component<Props> {
                 You have {this.props.posts.length}
 
                 {this.props.posts.map((post, index) => (
-                    <PostComponent key={index} {...post}/>
+                    <PostLink key={index} {...post}/>
                 ))}
             </div>
         );
