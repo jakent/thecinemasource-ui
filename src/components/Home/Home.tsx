@@ -15,7 +15,7 @@ interface DispatchProps {
 
 type Props = StateProps & DispatchProps;
 
-class App extends React.Component<Props> {
+class Home extends React.Component<Props> {
 
     componentDidMount() {
         this.props.fetchPosts();
@@ -42,4 +42,4 @@ const mapDispatchToProps: MapDispatchToProps<DispatchProps, {}> = dispatch => ({
     fetchPosts: () => dispatch(ActionCreators.fetchPostsRequest())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

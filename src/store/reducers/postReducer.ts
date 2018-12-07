@@ -7,7 +7,7 @@ export interface PostState {
     loading: boolean
 }
 
-const initialState = {
+export const initialState = {
     posts: [],
     loading: false,
 };
