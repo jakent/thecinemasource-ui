@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { connect, MapDispatchToProps, MapStateToProps } from 'react-redux';
 import { Photo } from '../../domain/Photo';
 import { ReduxState } from '../../store';
-import { ActionCreators } from '../../store/actions/postActions';
+import { PhotoActionCreators } from '../../store/actions/photoActions';
 
 interface StateProps {
     photos: Photo[]
@@ -38,11 +38,11 @@ class PostComponent extends React.Component<Props> {
 }
 
 const mapStateToProps: MapStateToProps<StateProps, {}, ReduxState> = state => ({
-    photos: state.post.photos
+    photos: state.photo.photos
 });
 
 const mapDispatchToProps: MapDispatchToProps<DispatchProps, {}> = ({
-    fetchPhotosForPost: ActionCreators.fetchPhotosRequest
+    fetchPhotosForPost: PhotoActionCreators.fetchPhotosRequest
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PostComponent);

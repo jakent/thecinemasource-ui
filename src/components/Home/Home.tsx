@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { PostLink } from "../PostLink/PostLink";
 import { connect, MapDispatchToProps, MapStateToProps } from 'react-redux';
-import { ActionCreators, FetchPostRequest } from '../../store/actions/postActions';
+import { PostActionCreators, FetchPostRequest } from '../../store/actions/postActions';
 import { ReduxState } from '../../store';
-import { Post } from '../../domain/Posts';
+import { Post } from '../../domain/Post';
 
 interface StateProps {
     posts: Post[]
@@ -39,7 +39,7 @@ const mapStateToProps: MapStateToProps<StateProps, {}, ReduxState> = state => ({
 });
 
 const mapDispatchToProps: MapDispatchToProps<DispatchProps, {}> = dispatch => ({
-    fetchPosts: () => dispatch(ActionCreators.fetchPostsRequest())
+    fetchPosts: () => dispatch(PostActionCreators.fetchPostsRequest())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

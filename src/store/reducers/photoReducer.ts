@@ -1,37 +1,39 @@
 import { Reducer } from 'redux';
-import { PostActions, PostActionTypes } from '../actions/postActions';
-import { Post } from '../../domain/Post';
+import { PhotoActions, PhotoActionTypes } from '../actions/photoActions';
+import { Photo } from '../../domain/Photo';
 
-export interface PostState {
-    posts: Post[],
+export interface PhotoState {
+    photos: Photo[],
     loading: boolean,
     error?: string,
 }
 
 export const initialState = {
-    posts: [],
+    photos: [],
     loading: false,
 };
 
-export const postReducer: Reducer<PostState> = (state = initialState, action: PostActionTypes) => {
+export const photoReducer: Reducer<PhotoState> = (state = initialState, action: PhotoActionTypes) => {
     switch (action.type) {
-        case PostActions.FETCH_POST_REQUEST:
+        case PhotoActions.FETCH_PHOTOS_REQUEST:
             return {
                 ...state,
+                asdf: action.payload,
                 loading: true,
             };
-        case PostActions.FETCH_POST_SUCCESS:
+        case PhotoActions.FETCH_PHOTOS_SUCCESS:
             return {
                 ...state,
-                posts: action.payload,
+                photos: action.payload,
                 loading: false,
             };
-        case PostActions.POSTS_ERROR:
+        case PhotoActions.PHOTO_ERROR:
             return {
                 ...state,
                 error: JSON.stringify(action.error, Object.getOwnPropertyNames(action.error)),
                 loading: false,
             };
+        case PhotoActions.BLAH: // TODO: I dont know why I need this
         default:
             return state;
     }

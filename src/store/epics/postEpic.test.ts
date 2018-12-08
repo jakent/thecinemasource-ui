@@ -4,7 +4,7 @@ import { postEpic } from './postEpic';
 import { Subject } from 'rxjs';
 import { toArray } from 'rxjs/operators';
 import { Post } from '../../domain/Post';
-import { ActionCreators } from '../actions/postActions';
+import { PostActionCreators } from '../actions/postActions';
 import { initialState, PostState } from '../reducers/postReducer';
 
 const post: Post = {
@@ -27,7 +27,7 @@ describe('postEpic', () => {
             .get('/api/posts')
             .reply(200, { results: posts });
 
-        const action$ = ActionsObservable.of(ActionCreators.fetchPostsRequest());
+        const action$ = ActionsObservable.of(PostActionCreators.fetchPostsRequest());
         const stateInput$ = new Subject<{ post: PostState }>();
         const state$ = new StateObservable<{ post: PostState }>(stateInput$, { post: initialState });
 
@@ -36,7 +36,7 @@ describe('postEpic', () => {
             .toPromise()
             .then((actions) => {
                 console.log(actions)
-                expect(actions).toEqual([ActionCreators.fetchPostsSuccess(posts)]);
+                expect(actions).toEqual([PostActionCreators.fetchPostsSuccess(posts)]);
             });
 
     });
