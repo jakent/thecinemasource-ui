@@ -9,6 +9,14 @@ import { connectRouter, routerMiddleware, RouterState } from 'connected-react-ro
 import { photoReducer, PhotoState } from './reducers/photoReducer';
 import { photoEpic } from './epics/photoEpic';
 import { PhotoActionCreators } from './actions/photoActions';
+import { createPaginator, PageState } from './actions/createPaginatorActions';
+
+
+
+
+export const postPaginator = createPaginator();
+
+
 
 export const history = createBrowserHistory();
 const epicMiddleware = createEpicMiddleware();
@@ -16,6 +24,9 @@ const epicMiddleware = createEpicMiddleware();
 export interface ReduxState {
     post: PostState;
     photo: PhotoState;
+    pagination: {
+        post: PageState
+    };
     router: RouterState;
 }
 
@@ -27,6 +38,9 @@ export const store: Store<ReduxState, AnyAction> = createStore(
     combineReducers({
         post: postReducer,
         photo: photoReducer,
+        pagination: combineReducers({
+            post: postPaginator.reducer,
+        }),
         router: connectRouter(history),
     }),
     composeWithDevTools(devToolsOptions)(applyMiddleware(
