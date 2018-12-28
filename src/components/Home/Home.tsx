@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { PostLink } from "../PostLink/PostLink";
 import { connect, MapDispatchToProps, MapStateToProps } from 'react-redux';
-import { PostActionCreators, FetchPostRequest } from '../../store/actions/postActions';
 import { postPaginator, ReduxState } from '../../store';
 import { Post } from '../../domain/Post';
 
@@ -38,7 +37,7 @@ class Home extends React.Component<Props> {
 }
 
 const mapStateToProps: MapStateToProps<StateProps, {}, ReduxState> = state => ({
-    posts: state.post.posts,
+    posts: Object.values(state.posts),
     currentPage: state.pagination.post.currentPage
 });
 

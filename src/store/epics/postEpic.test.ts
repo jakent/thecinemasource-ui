@@ -4,7 +4,7 @@ import { postEpic } from './postEpic';
 import { Subject } from 'rxjs';
 import { toArray } from 'rxjs/operators';
 import { Post } from '../../domain/Post';
-import { PostActionCreators } from '../actions/postActions';
+import { PostActionCreators } from '../reducers/postActions';
 import { initialState, PostState } from '../reducers/postReducer';
 
 const post: Post = {

@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { connect, MapDispatchToProps, MapStateToProps } from 'react-redux';
 import { Photo } from '../../domain/Photo';
 import { ReduxState } from '../../store';
-import { PhotoActionCreators } from '../../store/actions/photoActions';
+import { PhotoActionCreators } from '../../store/reducers/photoReducer';
 
 interface StateProps {
     photos: Photo[]

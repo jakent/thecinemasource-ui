@@ -1,20 +1,18 @@
 import { createBrowserHistory } from 'history';
 import { combineEpics, createEpicMiddleware } from 'redux-observable';
 import { postEpic } from './epics/postEpic';
-import { postReducer, PostState } from './reducers/postReducer';
-import { PostActionCreators } from './actions/postActions';
 import { AnyAction, applyMiddleware, combineReducers, createStore, Store } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { connectRouter, routerMiddleware, RouterState } from 'connected-react-router';
-import { photoReducer, PhotoState } from './reducers/photoReducer';
+import { photoReducer, PhotoState, PhotoActionCreators } from './reducers/photoReducer';
 import { photoEpic } from './epics/photoEpic';
-import { PhotoActionCreators } from './actions/photoActions';
-import { createPaginator, PageState } from './actions/createPaginatorActions';
+import { createPaginator, ItemState, PageState } from './reducers/createPaginatorActions';
+import { Post } from '../domain/Post';
 
 
 
 
-export const postPaginator = createPaginator();
+export const postPaginator = createPaginator<Post>();
 
 
 
@@ -22,7 +20,7 @@ export const history = createBrowserHistory();
 const epicMiddleware = createEpicMiddleware();
 
 export interface ReduxState {
-    post: PostState;
+    posts: ItemState<Post>;
     photo: PhotoState;
     pagination: {
         post: PageState
@@ -31,12 +29,12 @@ export interface ReduxState {
 }
 
 const devToolsOptions = {
-    actionCreators: { ...PostActionCreators, ...PhotoActionCreators},
+    actionCreators: { ...postPaginator.actionCreators, ...PhotoActionCreators},
 };
 
 export const store: Store<ReduxState, AnyAction> = createStore(
     combineReducers({
-        post: postReducer,
+        posts: postPaginator.itemsReducer,
         photo: photoReducer,
         pagination: combineReducers({
             post: postPaginator.reducer,

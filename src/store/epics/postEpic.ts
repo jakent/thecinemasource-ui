@@ -1,32 +1,25 @@
 import { combineEpics, Epic, ofType } from 'redux-observable';
-import {
-    PostActionCreators,
-    PostActions,
-    PostActionTypes
-} from '../actions/postActions';
-import { catchError, flatMap, map, mergeMap } from 'rxjs/operators';
+import { flatMap, mergeMap, tap } from 'rxjs/operators';
 import { ajax, AjaxResponse } from 'rxjs/ajax';
-import { of } from 'rxjs';
 import { Post } from '../../domain/Post';
 import { postPaginator } from '../index';
-import { PageActions, PageActionTypes } from '../actions/createPaginatorActions';
-import { ResultSet } from '../../domain/ResultSet';
+import { PageActions, PageActionTypes, RequestPage } from '../reducers/createPaginatorActions';
 
 
-const fetchPostsRequestEpic: Epic<PageActionTypes<Post>, PostActionTypes & PageActionTypes<Post>> = action$ =>
-    // @ts-ignore TODO: figure out later why this isnt compiling
+const fetchPostsRequestEpic: Epic<PageActionTypes<Post>, PageActionTypes<Post>> = action$ =>
     action$.pipe(
+    // @ts-ignore TODO: figure out later why this isnt compiling
         ofType(PageActions.REQUEST_PAGE),
-        mergeMap(() =>
-            ajax.get('/api/posts', { 'Content-Type': 'application/json' })
+        mergeMap((action: RequestPage) =>
+            ajax.get(`/api/posts?offset=${20 * action.payload.page}`, { 'Content-Type': 'application/json' })
                 .pipe(
+                    tap(item => console.log(action)),
                     flatMap((response: AjaxResponse) => [
-                        PostActionCreators.fetchPostsSuccess(response.response.results as Post[]),
-                        postPaginator.actionCreators.receivePage({...response.response, page: 0})
+                        postPaginator.actionCreators.receivePage({...response.response, page: action.payload.page})
                     ]),
                 )
         ),
-        catchError(e => of(PostActionCreators.postsError(e)))
+        // catchError(e => of(PostActionCreators.postsError(e)))
     );
 
 export const postEpic = combineEpics(

@@ -3,7 +3,7 @@ import { catchError, map, mergeMap } from 'rxjs/operators';
 import { ajax, AjaxResponse } from 'rxjs/ajax';
 import { of } from 'rxjs';
 import { Photo } from '../../domain/Photo';
-import { PhotoActionCreators, FetchPhotosRequest, PhotoActions, PhotoActionTypes } from '../actions/photoActions';
+import { PhotoActionCreators, FetchPhotosRequest, PhotoActions, PhotoActionTypes } from '../reducers/photoReducer';
 
 const fetchPhotosRequestEpic: Epic<PhotoActionTypes> = action$ =>
     action$.pipe(

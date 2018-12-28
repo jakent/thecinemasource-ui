@@ -12,33 +12,38 @@ export enum PageActions {
 }
 
 export type Blah = Action<PageActions.BLAH>;
-export type RequestPage = PayloadAction<PageActions.REQUEST_PAGE, {page: number}>;
-export type ReceivePage<T extends {id: number}> = PayloadAction<PageActions.RECEIVE_PAGE, ResultSet<T> & {page: number}>;
+export type RequestPage = PayloadAction<PageActions.REQUEST_PAGE, { page: number }>;
+export type ReceivePage<T extends { id: number }> = PayloadAction<PageActions.RECEIVE_PAGE, ResultSet<T> & { page: number }>;
 
-export type PageActionTypes<T extends {id: number}> = RequestPage | ReceivePage<T> | Blah;
+export type PageActionTypes<T extends { id: number }> = RequestPage | ReceivePage<T> | Blah;
+
+export interface ItemState<T extends { id: number }> {
+    [key: number]: T
+}
 
 export interface PageState {
     [key: number]: {
         ids: number[],
         fetching: boolean
     }
+
     currentPage: number
 }
 
 const initialState: PageState = {
     currentPage: 0
-}
+};
 
-export function createPaginator<T extends {id: number}>() {
+export function createPaginator<T extends { id: number }>() {
 
     /*
      * action creators
      */
     const PageActionCreators = {
-        requestPage(payload: {page: number}): RequestPage {
+        requestPage(payload: { page: number }): RequestPage {
             return { type: PageActions.REQUEST_PAGE, payload };
         },
-        receivePage(payload: ResultSet<T> & {page: number}): ReceivePage<T> {
+        receivePage(payload: ResultSet<T> & { page: number }): ReceivePage<T> {
             return { type: PageActions.RECEIVE_PAGE, payload };
         },
     };
@@ -54,44 +59,46 @@ export function createPaginator<T extends {id: number}>() {
                         ids: [],
                         fetching: true
                     }
-                }
+                };
             case PageActions.RECEIVE_PAGE:
                 return {
                     ...state,
                     [action.payload.page]: {
                         ids: action.payload.results.map(item => item.id),
                         fetching: false
-                    }
-                }
+                    },
+                    currentPage: action.payload.page
+                };
             case PageActions.BLAH:
             default:
                 return state
         }
 
-  }
+    };
 
-  return {
+    const itemsReducer: Reducer<ItemState<T>> = (items = {}, action: PageActionTypes<T>) => {
+        switch (action.type) {
+            case PageActions.RECEIVE_PAGE:
+                let _items = {}
+                for (let item of action.payload.results) {
+                    _items = {
+                        ..._items,
+                        [item.id]: item
+                    }
+                }
+                return {
+                    ...items,
+                    ..._items
+                }
+            default:
+                return items
+        }
+    };
+
+    return {
         reducer: pageReducer,
+        itemsReducer: itemsReducer,
         actionCreators: PageActionCreators
-  };
-
-  // const itemsReducer = (items = {}, action = {}) {
-  //   switch (action.type) {
-  //     case 'RECEIVE_PAGE':
-  //       let _items = {}
-  //       for (let item of action.payload.results) {
-  //         _items = {
-  //           ..._items,
-  //           [item.id]: item
-  //         }
-  //       }
-  //       return {
-  //         ...items,
-  //         ..._items
-  //       }
-  //     default:
-  //       return items
-  //   }
-  // }
+    };
 
 }
