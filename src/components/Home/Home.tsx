@@ -3,7 +3,7 @@ import { PostLink } from "../PostLink/PostLink";
 import { connect, MapDispatchToProps, MapStateToProps } from 'react-redux';
 import { postPaginator, ReduxState } from '../../store';
 import { Post } from '../../domain/Post';
-import { getCurrentPagePosts } from '../../store/selectors';
+import { doesCurrentPageHaveNext, doesCurrentPageHavePrev, getCurrentPagePosts } from '../../store/selectors';
 
 interface StateProps {
     posts: Post[]
@@ -46,9 +46,9 @@ class Home extends React.Component<Props> {
 
 const mapStateToProps: MapStateToProps<StateProps, {}, ReduxState> = state => ({
     posts: getCurrentPagePosts(state),
+    hasNext: doesCurrentPageHaveNext(state),
+    hasPrev: doesCurrentPageHavePrev(state),
     currentPage: state.pagination.post.currentPage,
-    hasNext: state.pagination.post.hasNext,
-    hasPrev: state.pagination.post.hasPrev,
 });
 
 const mapDispatchToProps: MapDispatchToProps<DispatchProps, {}> = dispatch => ({

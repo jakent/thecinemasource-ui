@@ -24,22 +24,20 @@ export interface ItemState<T extends { id: number }> {
 }
 
 export interface PageInfo {
-    ids: number[],
-    fetching: boolean,
+    ids: number[]
+    fetching: boolean
+    hasNext: boolean
+    hasPrev: boolean
     error?: Error
 }
 
 export interface PageState {
-    [key: number]: PageInfo
+    [key: number]: PageInfo | undefined
     currentPage: number
-    hasNext: boolean
-    hasPrev: boolean
 }
 
 const initialState: PageState = {
     currentPage: 0,
-    hasNext: false,
-    hasPrev: false,
 };
 
 export function createPaginator<T extends { id: number }>() {
@@ -63,12 +61,18 @@ export function createPaginator<T extends { id: number }>() {
     const pageReducer: Reducer<PageState> = (state = initialState, action: PageActionTypes<T>) => {
         switch (action.type) {
             case PageActions.REQUEST_PAGE:
-                return {
-                    ...state,
-                    [action.payload.page]: {
+                const page = state[action.payload.page]
+                    ? state[action.payload.page]
+                    : {
                         ids: [],
                         fetching: true,
-                    }
+                        hasPrev: false,
+                        hasNext: false,
+                    };
+                return {
+                    ...state,
+                    [action.payload.page]: page,
+                    currentPage: action.payload.page,
                 };
             case PageActions.RECEIVE_PAGE:
                 return {
@@ -76,10 +80,9 @@ export function createPaginator<T extends { id: number }>() {
                     [action.payload.page]: {
                         ids: action.payload.results.map(item => item.id),
                         fetching: false,
+                        hasPrev: Boolean(action.payload.previous),
+                        hasNext: Boolean(action.payload.next),
                     },
-                    currentPage: action.payload.page,
-                    hasPrev: Boolean(action.payload.previous),
-                    hasNext: Boolean(action.payload.next),
                 };
             case PageActions.PAGE_ERROR:
                 return {
@@ -88,9 +91,10 @@ export function createPaginator<T extends { id: number }>() {
                         ids: [],
                         fetching: false,
                         error: action.payload.error,
+                        // TODO: next, prev?
+                        hasPrev: false,
+                        hasNext: false,
                     },
-                    currentPage: action.payload.page,
-                    // TODO: next, prev?
                 };
             case PageActions.BLAH:
             default:

@@ -19,3 +19,17 @@ export const getCurrentPagePosts = createSelector(
         return page ? page.ids.map(id => posts[id]) : []
     }
 );
+
+export const doesCurrentPageHaveNext = createSelector(
+    [getCurrentPagedInfo, posts],
+    (page: PageInfo | undefined): boolean => {
+        return page ? page.hasNext : false
+    }
+);
+
+export const doesCurrentPageHavePrev = createSelector(
+    [getCurrentPagedInfo, posts],
+    (page: PageInfo | undefined): boolean => {
+        return page ? page.hasPrev : false
+    }
+);
