@@ -21,12 +21,13 @@ export interface ItemState<T extends { id: number }> {
     [key: number]: T
 }
 
-export interface PageState {
-    [key: number]: {
-        ids: number[],
-        fetching: boolean
-    }
+export interface PageInfo {
+    ids: number[],
+    fetching: boolean
+}
 
+export interface PageState {
+    [key: number]: PageInfo
     currentPage: number
 }
 

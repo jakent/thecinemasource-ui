@@ -3,6 +3,7 @@ import { PostLink } from "../PostLink/PostLink";
 import { connect, MapDispatchToProps, MapStateToProps } from 'react-redux';
 import { postPaginator, ReduxState } from '../../store';
 import { Post } from '../../domain/Post';
+import { getCurrentPagePosts } from '../../store/selectors';
 
 interface StateProps {
     posts: Post[]
@@ -37,7 +38,7 @@ class Home extends React.Component<Props> {
 }
 
 const mapStateToProps: MapStateToProps<StateProps, {}, ReduxState> = state => ({
-    posts: Object.values(state.posts),
+    posts: getCurrentPagePosts(state),
     currentPage: state.pagination.post.currentPage
 });
 
