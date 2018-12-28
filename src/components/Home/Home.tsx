@@ -8,6 +8,8 @@ import { getCurrentPagePosts } from '../../store/selectors';
 interface StateProps {
     posts: Post[]
     currentPage: number
+    hasNext: boolean
+    hasPrev: boolean
 }
 
 interface DispatchProps {
@@ -31,7 +33,12 @@ class Home extends React.Component<Props> {
                     <PostLink key={index} {...post}/>
                 ))}
 
+                {this.props.hasPrev &&
+                <button onClick={() => this.props.requestPage(this.props.currentPage - 1)}>Prev</button>
+                }
+                {this.props.hasNext &&
                 <button onClick={() => this.props.requestPage(this.props.currentPage + 1)}>Next</button>
+                }
             </div>
         );
     }
@@ -39,7 +46,9 @@ class Home extends React.Component<Props> {
 
 const mapStateToProps: MapStateToProps<StateProps, {}, ReduxState> = state => ({
     posts: getCurrentPagePosts(state),
-    currentPage: state.pagination.post.currentPage
+    currentPage: state.pagination.post.currentPage,
+    hasNext: state.pagination.post.hasNext,
+    hasPrev: state.pagination.post.hasPrev,
 });
 
 const mapDispatchToProps: MapDispatchToProps<DispatchProps, {}> = dispatch => ({

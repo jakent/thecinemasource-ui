@@ -8,14 +8,16 @@ import { Reducer } from 'redux';
 export enum PageActions {
     REQUEST_PAGE = 'page/fetch/REQUEST',
     RECEIVE_PAGE = 'page/fetch/SUCCESS',
+    PAGE_ERROR = 'page/fetch/ERROR',
     BLAH = 'blah',
 }
 
-export type Blah = Action<PageActions.BLAH>;
-export type RequestPage = PayloadAction<PageActions.REQUEST_PAGE, { page: number }>;
-export type ReceivePage<T extends { id: number }> = PayloadAction<PageActions.RECEIVE_PAGE, ResultSet<T> & { page: number }>;
+export type Blah = Action<typeof PageActions.BLAH>;
+export type RequestPage = PayloadAction<typeof PageActions.REQUEST_PAGE, { page: number }>;
+export type ReceivePage<T extends { id: number }> = PayloadAction<typeof PageActions.RECEIVE_PAGE, ResultSet<T> & { page: number }>;
+export type PageError = PayloadAction<typeof PageActions.PAGE_ERROR, { error: Error, page: number }>;
 
-export type PageActionTypes<T extends { id: number }> = RequestPage | ReceivePage<T> | Blah;
+export type PageActionTypes<T extends { id: number }> = RequestPage | ReceivePage<T> | PageError | Blah;
 
 export interface ItemState<T extends { id: number }> {
     [key: number]: T
@@ -23,16 +25,21 @@ export interface ItemState<T extends { id: number }> {
 
 export interface PageInfo {
     ids: number[],
-    fetching: boolean
+    fetching: boolean,
+    error?: Error
 }
 
 export interface PageState {
     [key: number]: PageInfo
     currentPage: number
+    hasNext: boolean
+    hasPrev: boolean
 }
 
 const initialState: PageState = {
-    currentPage: 0
+    currentPage: 0,
+    hasNext: false,
+    hasPrev: false,
 };
 
 export function createPaginator<T extends { id: number }>() {
@@ -47,18 +54,20 @@ export function createPaginator<T extends { id: number }>() {
         receivePage(payload: ResultSet<T> & { page: number }): ReceivePage<T> {
             return { type: PageActions.RECEIVE_PAGE, payload };
         },
+        pageError(payload: { error: Error, page: number }): PageError {
+            return { type: PageActions.PAGE_ERROR, payload }
+        },
     };
 
 
     const pageReducer: Reducer<PageState> = (state = initialState, action: PageActionTypes<T>) => {
-
         switch (action.type) {
             case PageActions.REQUEST_PAGE:
                 return {
                     ...state,
                     [action.payload.page]: {
                         ids: [],
-                        fetching: true
+                        fetching: true,
                     }
                 };
             case PageActions.RECEIVE_PAGE:
@@ -66,9 +75,22 @@ export function createPaginator<T extends { id: number }>() {
                     ...state,
                     [action.payload.page]: {
                         ids: action.payload.results.map(item => item.id),
-                        fetching: false
+                        fetching: false,
                     },
-                    currentPage: action.payload.page
+                    currentPage: action.payload.page,
+                    hasPrev: Boolean(action.payload.previous),
+                    hasNext: Boolean(action.payload.next),
+                };
+            case PageActions.PAGE_ERROR:
+                return {
+                    ...state,
+                    [action.payload.page]: {
+                        ids: [],
+                        fetching: false,
+                        error: action.payload.error,
+                    },
+                    currentPage: action.payload.page,
+                    // TODO: next, prev?
                 };
             case PageActions.BLAH:
             default:
@@ -80,7 +102,7 @@ export function createPaginator<T extends { id: number }>() {
     const itemsReducer: Reducer<ItemState<T>> = (items = {}, action: PageActionTypes<T>) => {
         switch (action.type) {
             case PageActions.RECEIVE_PAGE:
-                let _items = {}
+                let _items = {};
                 for (let item of action.payload.results) {
                     _items = {
                         ..._items,
@@ -90,7 +112,7 @@ export function createPaginator<T extends { id: number }>() {
                 return {
                     ...items,
                     ..._items
-                }
+                };
             default:
                 return items
         }
