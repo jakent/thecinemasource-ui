@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect'
 import { ItemState, PageInfo, PageState } from './reducers/createPaginatorActions';
-import { Post } from '../domain/Post';
+import { Post } from 'src/domain/Post';
 import { ReduxState } from './index';
 
 const pages = (state: ReduxState) => state.pagination.post;

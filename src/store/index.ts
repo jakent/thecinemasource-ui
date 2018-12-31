@@ -7,7 +7,7 @@ import { connectRouter, routerMiddleware, RouterState } from 'connected-react-ro
 import { photoReducer, PhotoState, PhotoActionCreators } from './reducers/photoReducer';
 import { photoEpic } from './epics/photoEpic';
 import { createPaginator, ItemState, PageState } from './reducers/createPaginatorActions';
-import { Post } from '../domain/Post';
+import { Post } from 'src/domain/Post';
 
 
 

@@ -1,5 +1,5 @@
 import { Action, PayloadAction } from './ActionTypes';
-import { ResultSet } from '../../domain/ResultSet';
+import { ResultSet } from 'src/domain/ResultSet';
 import { Reducer } from 'redux';
 
 /*
@@ -8,6 +8,7 @@ import { Reducer } from 'redux';
 export enum PageActions {
     REQUEST_PAGE = 'page/fetch/REQUEST',
     RECEIVE_PAGE = 'page/fetch/SUCCESS',
+    RECEIVE_PAGE_FROM_CACHE = 'page/cache/SUCCESS',
     PAGE_ERROR = 'page/fetch/ERROR',
     BLAH = 'blah',
 }
@@ -15,9 +16,10 @@ export enum PageActions {
 export type Blah = Action<typeof PageActions.BLAH>;
 export type RequestPage = PayloadAction<typeof PageActions.REQUEST_PAGE, { page: number }>;
 export type ReceivePage<T extends { id: number }> = PayloadAction<typeof PageActions.RECEIVE_PAGE, ResultSet<T> & { page: number }>;
+export type ReceivePageFromCache = PayloadAction<typeof PageActions.RECEIVE_PAGE_FROM_CACHE, { page: number }>;
 export type PageError = PayloadAction<typeof PageActions.PAGE_ERROR, { error: Error, page: number }>;
 
-export type PageActionTypes<T extends { id: number }> = RequestPage | ReceivePage<T> | PageError | Blah;
+export type PageActionTypes<T extends { id: number }> = RequestPage | ReceivePage<T> | ReceivePageFromCache | PageError | Blah;
 
 export interface ItemState<T extends { id: number }> {
     [key: number]: T
@@ -33,10 +35,12 @@ export interface PageInfo {
 
 export interface PageState {
     [key: number]: PageInfo | undefined
+    requestedPage: number
     currentPage: number
 }
 
 const initialState: PageState = {
+    requestedPage: 0,
     currentPage: 0,
 };
 
@@ -51,6 +55,9 @@ export function createPaginator<T extends { id: number }>() {
         },
         receivePage(payload: ResultSet<T> & { page: number }): ReceivePage<T> {
             return { type: PageActions.RECEIVE_PAGE, payload };
+        },
+        requestPageFromCache(payload: { page: number }): ReceivePageFromCache {
+            return { type: PageActions.RECEIVE_PAGE_FROM_CACHE, payload };
         },
         pageError(payload: { error: Error, page: number }): PageError {
             return { type: PageActions.PAGE_ERROR, payload }
@@ -72,7 +79,7 @@ export function createPaginator<T extends { id: number }>() {
                 return {
                     ...state,
                     [action.payload.page]: page,
-                    currentPage: action.payload.page,
+                    requestedPage: action.payload.page,
                 };
             case PageActions.RECEIVE_PAGE:
                 return {
@@ -83,6 +90,12 @@ export function createPaginator<T extends { id: number }>() {
                         hasPrev: Boolean(action.payload.previous),
                         hasNext: Boolean(action.payload.next),
                     },
+                    currentPage: action.payload.page,
+                };
+            case PageActions.RECEIVE_PAGE_FROM_CACHE:
+                return {
+                    ...state,
+                    currentPage: action.payload.page
                 };
             case PageActions.PAGE_ERROR:
                 return {
@@ -95,6 +108,7 @@ export function createPaginator<T extends { id: number }>() {
                         hasPrev: false,
                         hasNext: false,
                     },
+                    currentPage: action.payload.page,
                 };
             case PageActions.BLAH:
             default:

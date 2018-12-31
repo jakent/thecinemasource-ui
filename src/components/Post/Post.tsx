@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { connect, MapDispatchToProps, MapStateToProps } from 'react-redux';
-import { Photo } from '../../domain/Photo';
-import { ReduxState } from '../../store';
-import { PhotoActionCreators } from '../../store/reducers/photoReducer';
+import { Photo } from 'src/domain/Photo';
+import { ReduxState } from 'src/store';
+import { PhotoActionCreators } from 'src/store/reducers/photoReducer';
 
 interface StateProps {
     photos: Photo[]
@@ -29,8 +29,8 @@ class PostComponent extends React.Component<Props> {
         return (
             <div>
                 {this.props.match.params.id}
-                {this.props.photos.map((image) => (
-                    <img src={image.upload} />
+                {this.props.photos.map((image, index) => (
+                    <img key={index} src={image.upload} />
                 ))}
             </div>
         );

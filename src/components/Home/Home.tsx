@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { PostLink } from "../PostLink/PostLink";
 import { connect, MapDispatchToProps, MapStateToProps } from 'react-redux';
-import { postPaginator, ReduxState } from '../../store';
-import { Post } from '../../domain/Post';
-import { doesCurrentPageHaveNext, doesCurrentPageHavePrev, getCurrentPagePosts } from '../../store/selectors';
+import { postPaginator, ReduxState } from 'src/store';
+import { Post } from 'src/domain/Post';
+import { doesCurrentPageHaveNext, doesCurrentPageHavePrev, getCurrentPagePosts } from 'src/store/selectors';
 
 interface StateProps {
     posts: Post[]
@@ -48,6 +48,7 @@ const mapStateToProps: MapStateToProps<StateProps, {}, ReduxState> = state => ({
     posts: getCurrentPagePosts(state),
     hasNext: doesCurrentPageHaveNext(state),
     hasPrev: doesCurrentPageHavePrev(state),
+    requestedPage: state.pagination.post.requestedPage,
     currentPage: state.pagination.post.currentPage,
 });
 

@@ -3,9 +3,9 @@ import { ActionsObservable, StateObservable } from 'redux-observable';
 import { postEpic } from './postEpic';
 import { Subject } from 'rxjs';
 import { toArray } from 'rxjs/operators';
-import { Post } from '../../domain/Post';
-import { PostActionCreators } from '../reducers/postActions';
-import { initialState, PostState } from '../reducers/postReducer';
+import { Post } from 'src/domain/Post';
+import { PostActionCreators } from "../reducers/postActions";
+import { initialState, PostState } from "../reducers/postReducer";
 
 const post: Post = {
     id: 1,

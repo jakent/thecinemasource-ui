@@ -1,15 +1,14 @@
 import { combineEpics, Epic, ofType, StateObservable } from 'redux-observable';
 import { catchError, flatMap, mergeMap, tap } from 'rxjs/operators';
 import { ajax, AjaxResponse } from 'rxjs/ajax';
-import { Post } from '../../domain/Post';
-import { postPaginator, ReduxState } from '../index';
-import { PageActions, PageActionTypes, PageInfo, RequestPage } from '../reducers/createPaginatorActions';
+import { Post } from 'src/domain/Post';
+import { postPaginator, ReduxState } from 'src/store';
+import { PageActions, PageActionTypes, PageInfo, RequestPage } from 'src/store/reducers/createPaginatorActions';
 import { EMPTY, iif, of } from 'rxjs';
 
 const hasFetchedPage = (state$: StateObservable<ReduxState>): boolean => {
-    const pageInfo: PageInfo | undefined = state$.value.pagination.post[state$.value.pagination.post.currentPage];
+    const pageInfo: PageInfo | undefined = state$.value.pagination.post[state$.value.pagination.post.requestedPage];
 
-    console.log(pageInfo, pageInfo ? !pageInfo.fetching : false)
     return pageInfo ? !pageInfo.fetching : false;
 };
 
@@ -22,7 +21,8 @@ const fetchPostsFromServer = (action: RequestPage) =>
             ]),
         );
 
-const fetchPostsFromStore = () => EMPTY;
+const fetchPostsFromStore = (action: RequestPage, state$: StateObservable<ReduxState>) =>
+    of(postPaginator.actionCreators.requestPageFromCache({ page: action.payload.page }));
 
 const fetchPostsRequestEpic: Epic<PageActionTypes<Post>, PageActionTypes<Post>, ReduxState> = (action$, state$) =>
     action$.pipe(
@@ -31,7 +31,7 @@ const fetchPostsRequestEpic: Epic<PageActionTypes<Post>, PageActionTypes<Post>, 
         mergeMap((action: RequestPage) =>
             iif(
                 () => hasFetchedPage(state$),
-                fetchPostsFromStore(),
+                fetchPostsFromStore(action, state$),
                 fetchPostsFromServer(action),
             )
         ),

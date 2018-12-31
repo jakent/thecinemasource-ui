@@ -1,5 +1,5 @@
 import { Action, ErrorAction, PayloadAction } from './ActionTypes';
-import { Photo } from '../../domain/Photo';
+import { Photo } from 'src/domain/Photo';
 import { Reducer } from 'redux';
 
 /*

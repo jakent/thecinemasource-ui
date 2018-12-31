@@ -2,8 +2,8 @@ import { combineEpics, Epic, ofType } from 'redux-observable';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { ajax, AjaxResponse } from 'rxjs/ajax';
 import { of } from 'rxjs';
-import { Photo } from '../../domain/Photo';
-import { PhotoActionCreators, FetchPhotosRequest, PhotoActions, PhotoActionTypes } from '../reducers/photoReducer';
+import { Photo } from 'src/domain/Photo';
+import { PhotoActionCreators, FetchPhotosRequest, PhotoActions, PhotoActionTypes } from 'src/store/reducers/photoReducer';
 
 const fetchPhotosRequestEpic: Epic<PhotoActionTypes> = action$ =>
     action$.pipe(
