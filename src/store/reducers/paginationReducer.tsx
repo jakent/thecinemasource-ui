@@ -39,17 +39,24 @@ export interface PageState {
     currentPage: number
 }
 
-const initialState: PageState = {
+export const initialPaginationState: PageState = {
     requestedPage: 0,
     currentPage: 0,
 };
 
-export function createPaginator<T extends { id: number }>() {
+export interface PaginationActionCreators<T extends { id: number }> {
+    requestPage(payload: { page: number }): RequestPage
+    receivePage(payload: ResultSet<T> & { page: number }): ReceivePage<T>
+    requestPageFromCache(payload: { page: number }): ReceivePageFromCache
+    pageError(payload: { error: Error, page: number }): PageError
+}
+
+export function createPagination<T extends { id: number }>() {
 
     /*
      * action creators
      */
-    const PageActionCreators = {
+    const PageActionCreators: PaginationActionCreators<T> = {
         requestPage(payload: { page: number }): RequestPage {
             return { type: PageActions.REQUEST_PAGE, payload };
         },
@@ -65,7 +72,7 @@ export function createPaginator<T extends { id: number }>() {
     };
 
 
-    const pageReducer: Reducer<PageState> = (state = initialState, action: PageActionTypes<T>) => {
+    const pageReducer: Reducer<PageState> = (state = initialPaginationState, action: PageActionTypes<T>) => {
         switch (action.type) {
             case PageActions.REQUEST_PAGE:
                 const page = state[action.payload.page]
@@ -137,7 +144,7 @@ export function createPaginator<T extends { id: number }>() {
     };
 
     return {
-        reducer: pageReducer,
+        paginationReducer: pageReducer,
         itemsReducer: itemsReducer,
         actionCreators: PageActionCreators
     };

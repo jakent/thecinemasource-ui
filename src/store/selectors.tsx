@@ -1,9 +1,9 @@
 import { createSelector } from 'reselect'
-import { ItemState, PageInfo, PageState } from './reducers/createPaginatorActions';
+import { ItemState, PageInfo, PageState } from './reducers/paginationReducer';
 import { Post } from 'src/domain/Post';
 import { ReduxState } from './index';
 
-const pages = (state: ReduxState) => state.pagination.post;
+const pages = (state: ReduxState) => state.pagination.posts;
 const posts = (state: ReduxState) => state.posts;
 
 export const getCurrentPagedInfo = createSelector(
